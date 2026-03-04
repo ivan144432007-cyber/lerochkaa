@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Для милой 💖</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff5f8;
+    text-align: center;
+}
+
+.screen {
+    display: none;
+    padding: 40px 20px;
+}
+
+.active {
+    display: block;
+}
+
+h1 {
+    color: #e91e63;
+}
+
+button {
+    padding: 12px 25px;
+    background: #e91e63;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.heart {
+    cursor: pointer;
+    margin: 10px;
+    font-size: 20px;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.card {
+    width: 80px;
+    height: 80px;
+    background: #e91e63;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 1 Приветствие -->
+<div class="screen active" id="welcome">
+    <h1>Приветикии, бусинка 💖</h1>
+    <p>Решил сделать тебе приятно хихи)</p>
+    <p><b>Пройди мини-игру, чтобы открыть свои сюрпризы</b></p>
+    <button onclick="nextScreen('love')">Начать</button>
+</div>
+
+<!-- 2 Почему люблю -->
+<div class="screen" id="love">
+    <h1>Почему я тебя люблю</h1>
+    <p>Нажми на каждое сердечко, чтобы раскрыть причину</p>
+
+    <div class="heart" onclick="showReason('r1')">❤️ Твоя преданность</div>
+    <p id="r1" style="display:none;">Ты никогда не сдаёшься, даже когда трудно</p>
+
+    <div class="heart" onclick="showReason('r2')">❤️ Твоя нежность</div>
+    <p id="r2" style="display:none;">Ты даришь мне любовь каждый день</p>
+
+    <div class="heart" onclick="showReason('r3')">❤️ Твой юмор</div>
+    <p id="r3" style="display:none;">Ты всегда можешь рассмешить меня</p>
+
+    <div class="heart" onclick="showReason('r4')">❤️ Твоя красота</div>
+    <p id="r4" style="display:none;">Ты самая прекрасная девочка на свете</p>
+
+    <div class="heart" onclick="showReason('r5')">❤️ Наше будущее</div>
+    <p id="r5" style="display:none;">Хочу провести его только с тобой</p>
+
+    <br><br>
+    <button onclick="nextScreen('game')">Далее</button>
+</div>
+
+<!-- 3 Игра -->
+<div class="screen" id="game">
+    <h1>Давай сыграем перед сюрпризом</h1>
+    <p><b>Найди все пары!</b></p>
+    <p>Ходы: <span id="moves">0</span></p>
+
+    <div class="game-board" id="board"></div>
+
+    <br>
+    <button id="toMemories" style="display:none;" onclick="nextScreen('memories')">
+        Открыть дальше
+    </button>
+</div>
+
+<!-- 4 Воспоминания -->
+<div class="screen" id="memories">
+    <h1>Наши воспоминания</h1>
+    <p>Моменты, которые я храню в сердце💗</p>
+
+<div style="display:grid;
+grid-template-columns: repeat(2, 1fr);
+gap:10px; justify-items:center;">
+    <img src="photo1.jpg" width="140">
+    <img src="photo2.jpg" width="140">
+    <img src="photo3.jpg" width="140">
+    <img src="photo4.jpg" width="140">
+    <img src="photo5.jpg" width="140">
+    <img src="photo6.jpg" width="140">
+</div>
+
+    <br><br>
+    <button onclick="nextScreen('final')">Далее</button>
+</div>
+
+<!-- 5 Финал -->
+<div class="screen" id="final">
+    <h1>💗</h1>
+    <p>
+    Лерочка, ты - самое лучшее, что случилось в моей жизни. 
+    Каждый день рядом с тобой - это настоящее счастье. 
+    Спасибо за каждое мгновение, за каждую улыбку и за то, что ты просто есть рядом💕
+    </p>
+    <h2>Я тебя очень люблю!</h2>
+</div>
+
+<script>
+function nextScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function showReason(id) {
+    document.getElementById(id).style.display = "block";
+}
+
+/* ИГРА */
+const emojis = ["💖","💖","🌸","🌸","🎀","🎀"];
+let firstCard = null;
+let secondCard = null;
+let lock = false;
+let moves = 0;
+let matched = 0;
+
+const board = document.getElementById("board");
+emojis.sort(() => 0.5 - Math.random());
+
+emojis.forEach(emoji => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.emoji = emoji;
+    card.innerHTML = "?";
+    card.onclick = () => flipCard(card);
+    board.appendChild(card);
+});function flipCard(card) {
+    if (lock || card.innerHTML !== "?") return;
+
+    card.innerHTML = card.dataset.emoji;
+
+    if (!firstCard) {
+        firstCard = card;
+    } else {
+        secondCard = card;
+        lock = true;
+        moves++;
+        document.getElementById("moves").innerText = moves;
+
+        if (firstCard.dataset.emoji === secondCard.dataset.emoji) {
+            matched++;
+            resetTurn();
+            if (matched === 3) {
+                document.getElementById("toMemories").style.display = "inline-block";
+            }
+        } else {
+            setTimeout(() => {
+                firstCard.innerHTML = "?";
+                secondCard.innerHTML = "?";
+                resetTurn();
+            }, 800);
+        }
+    }
+}
+
+function resetTurn() {
+    firstCard = null;
+    secondCard = null;
+    lock = false;
+}
+</script>
+
+<div class="hearts"></div>
+
+<style>
+.hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.heart-fall {
+    position: absolute;
+    top: -20px;
+    font-size: 20px;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+        opacity: 0.8;
+    }
+}
+</style>
+
+<script>
+const heartsContainer = document.querySelector(".hearts");
+
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart-fall");
+    heart.innerHTML = "💖";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (15 + Math.random() * 20) + "px";
+    heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+
+    heartsContainer.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 6000);
+}
+
+setInterval(createHeart, 300);
+</script>
+
+</body>
+</html>
